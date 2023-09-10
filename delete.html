@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+
+        .loading {
+            color: blue;
+        }
+    </style>
+    <title>Delete Station</title>
+</head>
+<body>
+    <h1>Delete Station</h1>
+    <div>
+        <label for="station-id">Station ID:</label>
+        <input type="number" id="station-id" name="station-id" min="1" step="1" required>
+    </div>
+    <button id="delete-btn" onclick="deleteStation()">Delete Station</button>
+    <div id="result"></div>
+
+    <script>
+        async function deleteStation() {
+            const stationId = document.getElementById('station-id').value;
+            const resultElement = document.getElementById('result');
+            resultElement.innerHTML = `<span class="loading">Loading...</span>`;
+
+            try {
+                const response = await fetch(`http://127.0.0.1:5000/users/${stationId}.json`, {
+                    method: 'DELETE',
+                });
+
+                const responseData = await response.json();
+
+                if (responseData.error) {
+                    resultElement.innerHTML = `<span class="error">${responseData.error}</span>`;
+                } else {
+                    resultElement.innerHTML = `<span class="success">Successfully deleted station with ID: ${stationId}</span>`;
+                }
+            } catch (error) {
+                console.error('Fetch Error:', error);
+                resultElement.innerHTML = `<span class="error"> Fetch Error: ${error}</span>`;
+            }
+            }
+
+            
+    </script>
+</body>
+</html>
+
+
