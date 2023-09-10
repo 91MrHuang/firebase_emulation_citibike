@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="{{ url_for('static', filename='users.css') }}" rel="stylesheet" >
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <title>Information Table</title>
+
+    <script>
+      async function storeInput() {
+        const sortBy = document.getElementById("sort_by").value;
+
+        const base_url = 'http://127.0.0.1:5000/users.json';
+
+        let url;
+        let col_name;
+        if(sortBy == 'None'){
+          url = base_url;
+        }else{
+          const top = document.getElementById("top").value;
+          const order = document.querySelector('input[name="order"]:checked').value;
+
+          if (sortBy == 'Station ID'){
+            col_name = "station_id_int";
+          }else if (sortBy == 'Street Name'){
+            col_name = "street_name";
+          }else if(sortBy == 'Capacity'){
+            col_name = "capacity";
+          }else if(sortBy == 'Available Bikes'){
+            col_name = "num_bikes_available";
+          }else if(sortBy == 'Disabled Bikes'){
+            col_name = "num_bikes_disabled";
+          }
+
+          let limit;
+          if (order == "ascending") {
+            limit = "limitToFirst";
+          }else{
+            limit = "limitToLast";
+          }
+
+          const orderBy = 'orderBy="' + col_name + '"';
+
+          url = base_url + "?" + orderBy + "&" + limit + "=" + top;
+        }
+
+        /*const resultDiv = document.getElementById("result");
+          resultDiv.innerHTML = `
+          Sort by: ${sortBy}<br>
+          Top: ${top}<br>
+          Order: ${order}<br>
+          URL :${url}
+    `;*/
+    fetchData(url).then(data => {
+        if (data) {
+            const table = createTable(data);
+            const tableContainer = document.getElementById('table-container');
+            
+            // Clear any existing table before appending the new one
+            tableContainer.innerHTML = "";
+            tableContainer.appendChild(table);
+        }
+    });
+
+    return url;
+}
+  </script>
+
+  </head>
+
+  <body>
+    <pre id="api-data"></pre>
+
+    <h1>Information Table</h1>
+
+    <form onsubmit="event.preventDefault(); storeInput();">
+      <label for="sort_by">Sort by:</label>
+      <select id="sort_by" name="sort_by">
+          <option value="None">None</option>
+          <option value="Station ID">Station ID</option>
+          <option value="Street Name">Street Name</option>
+          <option value="Capacity">Capacity</option>
+          <option value="Available Bikes">Available Bikes</option>
+          <option value="Disabled Bikes">Disabled Bikes</option>
+      </select>
+
+      <br><br>
+
+      <label for="top">Top:</label>
+      <input type="number" id="top" name="top" min="1" placeholder="Enter a number">
+
+      <br><br>
+
+      <label for="order">Order:</label>
+      <input type="radio" id="ascending" name="order" value="ascending">
+      <label for="ascending">Ascending</label>
+      <input type="radio" id="descending" name="order" value="descending">
+      <label for="descending">Descending</label>
+
+      <br><br>
+
+      <input type="submit" value="Submit">
+  </form>
+
+  <div id="result" style="margin-top: 20px;"></div>
+    
+  <div id="table-container"></div>
+
+
+  <script>
+//get url
+async function fetchData(url) {
+  console.log("Using URL:", url);
+
+  const requestOptions = {
+    method: 'GET', // or 'POST', 'PUT', 'DELETE', etc.
+  };
+
+  try {
+    const response = await fetch(url, requestOptions);
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const jsonResponse = await response.json();
+    return jsonResponse; // Return the jsonResponse from the function
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error);
+    return null;
+  }
+}
+
+function createTable(data) {
+  const sortBy = document.getElementById("sort_by").value;
+  const order = document.querySelector('input[name="order"]:checked').value;
+
+  const sortedData = Object.values(data).sort((a, b) => {
+    if (sortBy === 'Capacity') {
+      if (order === 'ascending') {
+        return a.capacity - b.capacity;
+      } else {
+        return b.capacity - a.capacity;
+      }
+    } else {
+      return 0;
+    }
+  });
+
+  const table = document.createElement('table');
+  table.setAttribute('border', '1');
+
+  const header = document.createElement('tr');
+  const headers = [
+    'Station ID',
+    'Street Name',
+    'Capacity',
+    'Available Bikes',
+    'Disabled Bikes'
+  ];
+
+  headers.forEach(headerText => {
+    const th = document.createElement('th');
+    th.textContent = headerText;
+    header.appendChild(th);
+  });
+
+  table.appendChild(header);
+
+  sortedData.forEach(item => {
+    const row = document.createElement('tr');
+
+    const stationId = document.createElement('td');
+    stationId.textContent = item.station_id_int;
+    row.appendChild(stationId);
+
+    const streetName = document.createElement('td');
+    streetName.textContent = item.street_name;
+    row.appendChild(streetName);
+
+    const capacity = document.createElement('td');
+    capacity.textContent = item.capacity;
+    row.appendChild(capacity);
+
+    const numBikesAvailable = document.createElement('td');
+    numBikesAvailable.textContent = item.num_bikes_available;
+    row.appendChild(numBikesAvailable);
+
+    const numBikesDisabled = document.createElement('td');
+    numBikesDisabled.textContent = item.num_bikes_disabled;
+    row.appendChild(numBikesDisabled);
+
+    table.appendChild(row);
+  });
+
+  return table;
+}
+
+
+    </script>
+  </body>
+</html>
+    
