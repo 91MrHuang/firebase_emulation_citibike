@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="{{ url_for('static', filename='users.css') }}" rel="stylesheet" >
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <title>Add Station</title>
+
+  </head>
+
+  <body>
+    <pre id="api-data"></pre>
+
+    <h1>Add Station</h1>
+
+    <form onsubmit="event.preventDefault();" id="bike-station-form">
+        <label for="street_name">Street Name:</label>
+        <input type="text" id="street_name" name="street_name" required><br><br>
+
+        <label for="capacity">Capacity:</label>
+        <input type="number" id="capacity" name="capacity" min=1 required><br><br>
+
+        <label for="num_bikes_available">Number of Bikes Available:</label>
+        <input type="number" id="num_bikes_available" name="num_bikes_available" min=1 required><br><br>
+
+        <label for="num_bikes_disabled">Number of Bikes Disabled:</label>
+        <input type="number" id="num_bikes_disabled" name="num_bikes_disabled" min =1 required><br><br>
+
+        <button type="submit">Submit</button>
+  </form>
+
+  <div id="result" style="margin-top: 20px;"></div>
+    
+  <div id="table-container"></div>
+
+
+  <script>
+    document.getElementById('bike-station-form').addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    // Get form data
+    const street_name = document.getElementById('street_name').value;
+    const capacity = document.getElementById('capacity').value;
+    const num_bikes_available = document.getElementById('num_bikes_available').value;
+    const num_bikes_disabled = document.getElementById('num_bikes_disabled').value;
+
+    /// Create JSON data
+    const data = {
+        street_name: street_name,
+        capacity: parseInt(capacity),
+        num_bikes_available: parseInt(num_bikes_available),
+        num_bikes_disabled: parseInt(num_bikes_disabled),
+    };
+    result.innerHTML = `<span style="color: blue;" class="loading">Loading...</span>`;
+
+    // Send POST request
+    const resultDiv = document.getElementById('result');
+    try {
+        const response = await fetch('http://127.0.0.1:5000/users.json', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+            const responseData = await response.json();
+            console.log('Data sent successfully:', data);
+            resultDiv.innerHTML = '<span style="color: green;">Data sent successfully!Result: </span><pre>' + JSON.stringify(responseData, null, 2) + '</pre>';
+        } else {
+            console.error('Error:', response.statusText);
+            resultDiv.innerHTML = '<span style="color: red;">Error: ' + response.statusText + '</span>';
+        }
+    } catch (error) {
+        console.error('Fetch Error:', error);
+    }
+})
+
+    </script>
+  </body>
+</html>
+    
