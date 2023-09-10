@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .attribute-input {
+            margin-bottom: 10px;
+        }
+    </style>
+
+    <title>Update Station</title>
+</head>
+<body>
+    <h1>Update Station</h1>
+
+    <label for="station-id">Station ID:</label>
+    <input type="text" id="station-id">
+    <br><br>
+
+    <button id="add-button" onclick="addAttribute()">Add Attribute</button>
+    <br><br>
+
+    <div id="attributes"></div>
+
+    <button onclick="handleUpdate()">Submit</button>
+    <p id="result"></p>
+
+    <script>
+        const attributesContainer = document.getElementById('attributes');
+        const addButton = document.getElementById('add-button');
+
+        function addAttribute() {
+            if (attributesContainer.childElementCount >= 4) {
+                return;
+            }
+
+            const attributeDiv = document.createElement('div');
+            attributeDiv.classList.add('attribute-input');
+
+            const select = document.createElement('select');
+            updateSelectOptions(select);
+
+            const input = document.createElement('input');
+            input.placeholder = 'New Value';
+
+            select.addEventListener('change', () => {
+                if (['capacity', 'num_bikes_available', 'num_bikes_disabled'].includes(select.value)) {
+                    input.type = 'number';
+                    input.step = '1';
+                } else {
+                    input.type = 'text';
+                }
+            });
+
+            if (['capacity', 'num_bikes_available', 'num_bikes_disabled'].includes(select.value)) {
+                input.type = 'number';
+                input.step = '1';
+            } else {
+                input.type = 'text';
+            }
+
+            attributeDiv.appendChild(select);
+            attributeDiv.appendChild(input);
+            attributesContainer.appendChild(attributeDiv);
+
+            if (attributesContainer.childElementCount >= 4) {
+                addButton.disabled = true;
+            }
+        }
+
+        function updateSelectOptions(select) {
+            const usedAttributes = Array.from(attributesContainer.children).map(
+                child => child.querySelector('select').value
+            );
+
+            const availableAttributes = [
+                'street_name',
+                'capacity',
+                'num_bikes_available',
+                'num_bikes_disabled',
+            ].filter(attr => !usedAttributes.includes(attr));
+
+            select.innerHTML = availableAttributes
+                .map(attr => `<option value="${attr}">${attr}</option>`)
+                .join('');
+        }
+
+        async function checkStationExists(stationId) {
+            const response = await fetch(`http://127.0.0.1:5000/users/${stationId}.json`);
+            return response.ok && response.status !== 204;
+            
+        }
+
+        async function handleUpdate() {
+            const resultElement = document.getElementById('result');
+            resultElement.innerHTML = '<span style="color: blue;">Loading...</span>';
+
+            const stationId = document.getElementById('station-id').value;
+            const stationExists = await checkStationExists(stationId);
+
+            if (!stationExists) {
+                document.getElementById('result').innerHTML = '<span style="color: red;">Station ID not found</span>';
+                return;
+            }
+
+            submitChanges();
+        }
+
+        async function submitChanges() {
+            const stationId = document.getElementById('station-id').value;
+            const attributeInputs = Array.from(attributesContainer.children);
+
+            if (attributeInputs.length === 1) {
+                const select = attributeInputs[0].querySelector('select');
+                const input = attributeInputs[0].querySelector('input');
+                const attribute = select.value;
+                const newValue = input.value;
+
+                const isNumericAttribute = [
+                    'capacity',
+                    'num_bikes_available',
+                    'num_bikes_disabled',
+                ].includes(attribute);
+
+                response = await fetch(`http://127.0.0.1:5000/users/${stationId}/${attribute}.json`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: attribute === 'street_name' ? newValue : (isNumericAttribute ? Number(newValue) : JSON.stringify(newValue)),
+                });
+            } else {
+                const data = {};
+
+                attributeInputs.forEach(attrInput => {
+                    const select = attrInput.querySelector('select');
+                    const input = attrInput.querySelector('input');
+                    const attribute = select.value;
+                    const newValue = input.value;
+
+                    const isNumericAttribute = [
+                        'capacity',
+                        'num_bikes_available',
+                        'num_bikes_disabled',
+                    ].includes(attribute);
+
+                    data[attribute] = isNumericAttribute && attribute !== 'address' ? Number(newValue) : newValue;
+                });
+
+                response = await fetch(`http://127.0.0.1:5000/users/${stationId}.json`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+            }
+
+            if (response.ok) {
+                const responseData = await response.json();
+                const resultElement = document.getElementById('result');
+                resultElement.innerHTML = '<span style="color: green;">Data updated successfully! Result: </span><pre>' + JSON.stringify(responseData, null, 2) + '</pre>';
+            }
+        }
+
+
+    </script>
+</body>
+</html>
