@@ -6,11 +6,19 @@ Citi bike station information source(https://www.kaggle.com/datasets/fatihb/citi
 The original dataset includes 18 columns. We extracted 5 of them: station id, street name, capacity, available bikes, and disabled bikes. The intuition of our product is a bike station search website. Users can search the station by its attributes to know how many available bikes are there. Users can also help to update the station information by changing, adding, and deleting features, which corresponds to the curl PUT/PATCH, POST, and DELETE commands. 
 
 ## How to use
-1. python app.py. The temporary webpage address will be shown with messsage in forms of 
-    * Running on http://127.0.0.1:5000 
-2. Copy the address and enter it in a browser. The webpage will show up
-![alt text](https://github.com/91MrHuang/firebase_emulation_citibike/blob/main/illustrates/Mainpage.png)
-3. Open a new terminal window to run a command-line interface commands. Sample commands below
+1. Navigate to project directory, run
+   ```bash
+    python app.py
+   ```
+    Terminal will return message similar to this
+   ![alt text](https://github.com/91MrHuang/firebase_emulation_citibike/blob/main/illustrates/terminal_msg.png)
+   
+   In this case, the temporary website address is http://127.0.0.1:5000
+3. Copy the address and enter it in a browser. The webpage will show up
+![alt text](https://github.com/91MrHuang/firebase_emulation_citibike/blob/main/illustrates/mainpage.png)
+
+Perform search operation on the main page. Scroll down for more options like delete, add, update...
+5. Open a new terminal window to run a command-line interface commands. Sample commands below
 
 
 ## Sample command-line interface commands
