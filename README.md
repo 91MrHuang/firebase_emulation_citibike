@@ -9,14 +9,14 @@ The original dataset includes 18 columns. We extracted 5 of them: station id, st
 1. python app.py. The temporary webpage address will be shown with messsage in forms of 
     * Running on http://127.0.0.1:5000 
 2. Copy the address and enter it in a browser. The webpage will show up
-![alt text](http://url/to/img.png)
+![alt text][(https://github.com/91MrHuang/firebase_emulation_citibike/blob/main/illustrates/Mainpage.png)
 3. Open a new terminal window to run a command-line interface commands. Sample commands below
 
 
 ## Sample command-line interface commands
 - Show all: 
 
-    curl -X GET 'http://127.0.0.1:5000/users.json'
+    ```curl -X GET 'http://127.0.0.1:5000/users.json'```
 - Filter by capacity, last 5: 
 
     curl -X GET 'http://127.0.0.1:5000/users.json?orderBy="capacity"&limitToLast=5'
