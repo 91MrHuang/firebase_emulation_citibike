@@ -16,30 +16,39 @@ The original dataset includes 18 columns. We extracted 5 of them: station id, st
 ## Sample command-line interface commands
 - Show all: 
 
-    ```curl -X GET 'http://127.0.0.1:5000/users.json'```
+    ```bash
+    curl -X GET 'http://127.0.0.1:5000/users.json'
+    ```
 - Filter by capacity, last 5: 
-
+   ```bash
     curl -X GET 'http://127.0.0.1:5000/users.json?orderBy="capacity"&limitToLast=5'
+   ```
+
 - Search by address: 
- 
+    ```bash
     curl -X GET 'http://127.0.0.1:5000/users.json?orderBy="street_name"&equalTo="Picnic%20Point"'
+    ```
 - Add a new station:
-
+   ```bash
     curl -X POST 'http://127.0.0.1:5000/users.json' -d '{"street_name": "1337 W 36th", "capacity": 20, "num_bikes_available": 5, "num_bikes_disabled": 5}'
+   ```
 - Modify attribute(s):
-
+   ```bash
     curl -X PUT 'http://127.0.0.1:5000/users/6004/capacity.json' -d '30'
-
+   ```
+   ```bash
     curl -X PATCH 'http://127.0.0.1:5000/users/6004.json' -d '{"capacity": 40, "num_bikes_available": 10}'
+   ```
 - Delete attribute and station: 
     - attribute deletion:
-    
+       ```bash
         curl -X DELETE 'http://127.0.0.1:5000/users/6004/capacity.json'
-
+       ```
 
     - station deletion:
-        
+        ```bash
         curl -X DELETE 'http://127.0.0.1:5000/users/6004.json'
+        ```
 
 
 
