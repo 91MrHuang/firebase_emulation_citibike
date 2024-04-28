@@ -3,7 +3,7 @@ The project was designed to emulate the Firebase Realtime Database, leveraging F
 
 ## Dataset
 Citi bike station information source(https://www.kaggle.com/datasets/fatihb/citibike-sampled-data-2013-2017)
-The original dataset includes 18 columns. I extracted 5 of them: station id, street name, capacity, available bikes, and disabled bikes. The intuition of our product is a bike station search website. Users can search the station by its attributes to know how many available bikes are there. Users can also help to update the station information by changing, adding, and deleting features, which corresponds to the curl PUT/PATCH, POST, and DELETE commands. 
+The original dataset includes 18 columns. I extracted 5 of them: station id, street name, capacity, available bikes, and disabled bikes. The intuition of this product is a bike station search website. Users can search the station by its attributes to know how many available bikes are there. Users can also help to update the station information by changing, adding, and deleting features, which corresponds to the curl PUT/PATCH, POST, and DELETE commands. 
 
 ## How to use
 1. Navigate to project directory, run
